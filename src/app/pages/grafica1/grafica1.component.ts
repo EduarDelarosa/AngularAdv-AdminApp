@@ -8,6 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class Grafica1Component implements OnInit {
 
+  public title: string = 'Sin Titulo';
+
+  public items: string[] = [ 'item 1', 'items 2', 'item 3' ];
+  public data1  = {
+    datasets: [
+      { data: [ 10, 10, 80 ] }
+    ]
+  };
+
   constructor() { }
 
   ngOnInit(): void {
