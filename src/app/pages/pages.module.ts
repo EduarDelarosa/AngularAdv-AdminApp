@@ -11,6 +11,7 @@ import { PagesComponent } from './pages.component';
 import { SharedModule } from '../shared/shared.module';
 import { ComponentsModule } from '../components/components.module';
 import { AppRoutingModule } from '../app-routing.module';
+import { AcountSettingsComponent } from './acount-settings/acount-settings.component';
 
 
 
@@ -19,13 +20,15 @@ import { AppRoutingModule } from '../app-routing.module';
     DashboardComponent,
     ProgressComponent,
     Grafica1Component,
-    PagesComponent
+    PagesComponent,
+    AcountSettingsComponent
   ],
   exports: [
     DashboardComponent,
     ProgressComponent,
     Grafica1Component,
-    PagesComponent
+    PagesComponent,
+    AcountSettingsComponent
   ],
   imports: [
     CommonModule,
