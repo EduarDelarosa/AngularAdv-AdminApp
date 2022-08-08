@@ -7,6 +7,7 @@ import { LoginForm } from '../interfaces/login-form.interface';
 import { RegisterForm } from '../interfaces/register-form.interface';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
+import { Usuario } from '../models/usuario.model';
 
 declare const google: any;
 const base_url = environment.base_url;
@@ -16,23 +17,34 @@ const base_url = environment.base_url;
 })
 export class UsuarioService {
 
+  public usuario!: Usuario;
+
   constructor( private http: HttpClient,
                private router: Router,
                private ngZone: NgZone ) { }
 
 
+  get uid(): string {
+    return this.usuario?.uid || '';
+  }
+
+  get token(): string {
+    return localStorage.getItem('token') || '';
+  }
+
   validarToken(): Observable<boolean> {
-    const token = localStorage.getItem('token') || '';
 
     return this.http.get(`${base_url}/login/renew`, {
       headers: {
-        'x-token': token
+        'x-token': this.token
       }
      }).pipe(
-      tap( ( resp:any ) => {
+      map( ( resp:any ) => {
+        const { email, google, nombre, role, img, uid } = resp.usuarioDB;
+        this.usuario = new Usuario( nombre, email, '', role, google, img, uid );
         localStorage.setItem( 'token', resp.token );
+        return true;
       }),
-      map( resp => true ),
       catchError( error => of(false) )
      );
 
@@ -45,6 +57,20 @@ export class UsuarioService {
                     localStorage.setItem( 'token', res.token );
                   })
                 )
+  }
+
+  actualizarUsuario( data: { nombre: string, email: string, role: any } ){
+
+    data = {
+      ...data,
+      role: this.usuario.role,
+    }
+
+    return this.http.put(`${base_url}/usuarios/${ this.uid }`, data, {
+      headers: {
+        'x-token': this.token
+      }
+    });
   }
 
   login( formData: LoginForm ){
@@ -71,9 +97,8 @@ export class UsuarioService {
 
     google.accounts.id.revoke('eduardelarosa09@gmail.com', () =>{
 
-      this.ngZone.run(() => {
         this.router.navigateByUrl('/login');
-      });
+
     });
   }
 
