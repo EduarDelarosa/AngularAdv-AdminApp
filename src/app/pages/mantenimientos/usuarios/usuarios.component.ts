@@ -25,6 +25,7 @@ export class UsuariosComponent implements OnInit, OnDestroy{
   constructor(private usuarioService: UsuarioService,
               private busquedaService: BusquedasService,
               private modalService: ModalImagenService) { }
+
   ngOnDestroy(): void {
     this.imgSubs.unsubscribe();
   }
@@ -59,7 +60,7 @@ export class UsuariosComponent implements OnInit, OnDestroy{
 
     if( this.usuariosDesde < 0 ){
       this.usuariosDesde = 0;
-    }else if( this.usuariosDesde > this.totalUsuarios ){
+    }else if( this.usuariosDesde >= this.totalUsuarios ){
       this.usuariosDesde -= valor;
     }
 
@@ -74,7 +75,7 @@ export class UsuariosComponent implements OnInit, OnDestroy{
     }
 
     this.busquedaService.buscar( 'usuarios', busqueda )
-      .subscribe( resp => this.usuarios = resp );
+      .subscribe( resp => this.usuarios = resp as Usuario[] );
   }
 
   eliminarUsuario( usuario : Usuario) {
@@ -96,15 +97,12 @@ export class UsuariosComponent implements OnInit, OnDestroy{
       if (result.isConfirmed) {
         this.usuarioService.eliminar( usuario ).subscribe(
           () => {
-
             this.cargarUsuarios();
             Swal.fire(
             'usuario eliminado',
             `${ usuario.nombre } fue eliminado correctamente`,
             'success'
-
           )}
-
         );
       }
     })
@@ -112,13 +110,11 @@ export class UsuariosComponent implements OnInit, OnDestroy{
 
   cambiarRole( usuario: Usuario ){
     this.usuarioService.actualizarRole( usuario )
-        .subscribe( resp => {
-      console.log(resp);
-    } )
+        .subscribe( () => {
+    })
   }
 
-  abrirModal( usuario:Usuario ){
-    console.log(usuario);
+  abrirModal( usuario: Usuario ){
     this.modalService.abrirModal( 'usuarios', usuario.uid, usuario.img );
   }
 }
