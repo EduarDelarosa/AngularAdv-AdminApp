@@ -24,7 +24,14 @@ export class HeaderComponent implements OnInit {
 
   logOut(){
     this.usuarioService.logout();
-    this.router.navigateByUrl('/login');
+    this.router.navigate(['/login']);
+  }
+
+  buscar( termino: string ){
+    if( termino.length === 0 ){
+      return;
+    }
+    this.router.navigateByUrl(`/dashboard/buscar/${ termino }`);
   }
 
 }

@@ -37,8 +37,17 @@ export class UsuarioService {
   }
   }
 
+  get role(): 'ADMIN_ROLE' | 'USER_ROLE' {
+    return this.usuario.role;
+  }
+
   get token(): string {
     return localStorage.getItem('token') || '';
+  }
+
+  guardarLS( token: string, menu: any ){
+    localStorage.setItem( 'token', token );
+    localStorage.setItem( 'menu', JSON.stringify(menu) );
   }
 
   validarToken(): Observable<boolean> {
@@ -47,7 +56,7 @@ export class UsuarioService {
       map( ( resp:any ) => {
         const { email, google, nombre, role, img, uid } = resp.usuarioDB;
         this.usuario = new Usuario( nombre, email, '', role, google, img, uid );
-        localStorage.setItem( 'token', resp.token );
+        this.guardarLS( resp.token, resp.menu );
         return true;
       }),
       catchError( () => of(false) )
@@ -58,8 +67,8 @@ export class UsuarioService {
   crearUsuario( formData: RegisterForm ){
     return this.http.post(`${base_url}/usuarios`, formData)
                 .pipe(
-                  tap( ( res: any ) => {
-                    localStorage.setItem( 'token', res.token );
+                  tap( ( resp: any ) => {
+                    this.guardarLS( resp.token, resp.menu );
                   })
                 )
   }
@@ -77,8 +86,8 @@ export class UsuarioService {
   login( formData: LoginForm ){
     return this.http.post(`${base_url}/login`, formData)
                 .pipe(
-                  tap( ( res: any ) => {
-                    localStorage.setItem( 'token', res.token );
+                  tap( ( resp: any ) => {
+                    this.guardarLS( resp.token, resp.menu );
                   })
                 )
   }
@@ -86,14 +95,15 @@ export class UsuarioService {
   loginGoogle( token: string ){
     return this.http.post(`${base_url}/login/google`, { token })
       .pipe(
-        tap( ( res: any ) => {
-          localStorage.setItem( 'token', res.token );
+        tap( ( resp: any ) => {
+          this.guardarLS( resp.token, resp.menu );
         })
       )
   }
 
   logout(){
     localStorage.removeItem( 'token' );
+    localStorage.removeItem( 'menu' );
 
 
     google.accounts.id.revoke('eduardelarosa09@gmail.com', () =>{

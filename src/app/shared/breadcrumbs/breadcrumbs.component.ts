@@ -33,7 +33,6 @@ export class BreadcrumbsComponent implements OnDestroy {
         map( ( event: ActivationEnd ) => event.snapshot.data ),
        )
        .subscribe( ({ titulo }) => {
-         console.log( titulo );
          this.title = titulo;
          document.title = `AdminApp - ${this.title}`;
        });

@@ -62,5 +62,11 @@ export class BusquedasService {
                   );
   }
 
+  buscarAll( termino: string ){
+    // http://localhost:3000/api/todo/e
+    const url = `${ base_url }/todo/${ termino }`;
+    return this.http.get(url, this.headers)
+  }
+
 
 }
